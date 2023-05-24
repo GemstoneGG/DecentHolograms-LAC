@@ -1,14 +1,15 @@
 package eu.decentsoftware.holograms.api.utils.tick;
 
+import eu.decentsoftware.holograms.api.DecentHologramsAPI;
 import eu.decentsoftware.holograms.api.utils.DExecutor;
 import eu.decentsoftware.holograms.api.utils.collection.DList;
-import eu.decentsoftware.holograms.api.utils.scheduler.S;
+import space.arim.morepaperlib.scheduling.ScheduledTask;
 
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Ticker {
 
-    private final int taskId;
+    private final ScheduledTask task;
     private final AtomicLong ticks;
     private final DList<ITicked> tickedObjects;
     private final DList<ITicked> newTickedObjects;
@@ -24,16 +25,16 @@ public class Ticker {
         this.newTickedObjects = new DList<>(64);
         this.removeTickedObjects = new DList<>(64);
         this.performingTick = false;
-        this.taskId = S.asyncTask(() -> {
-            if (!performingTick) tick();
-        }, 1L, 5L).getTaskId();
+        this.task = DecentHologramsAPI.getMorePaperLib().scheduling().globalRegionalScheduler().runAtFixedRate(() -> {if (!performingTick) tick();}, 1L, 5L);
     }
 
     /**
      * Stop the ticker and unregister all ticked objects.
      */
     public void destroy() {
-        S.stopTask(taskId);
+        if (!task.isCancelled()) {
+            task.cancel();
+        }
         tickedObjects.clear();
         newTickedObjects.clear();
         removeTickedObjects.clear();

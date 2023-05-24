@@ -5,6 +5,7 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.ApiStatus;
+import space.arim.morepaperlib.MorePaperLib;
 
 /**
  * This class is used to access DecentHologramsAPI. You can use this class
@@ -17,6 +18,7 @@ import org.jetbrains.annotations.ApiStatus;
 public final class DecentHologramsAPI {
 
     private static DecentHolograms implementation;
+    private static MorePaperLib morePaperLib;
     private static boolean enabled = false;
 
     /**
@@ -32,6 +34,7 @@ public final class DecentHologramsAPI {
         if (implementation != null) {
             return;
         }
+        morePaperLib = new MorePaperLib(plugin);
         implementation = new DecentHolograms(plugin);
         implementation.load();
     }
@@ -99,4 +102,7 @@ public final class DecentHologramsAPI {
         return implementation;
     }
 
+    public static MorePaperLib getMorePaperLib() {
+        return morePaperLib;
+    }
 }

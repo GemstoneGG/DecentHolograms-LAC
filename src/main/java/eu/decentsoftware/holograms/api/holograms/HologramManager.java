@@ -7,7 +7,6 @@ import eu.decentsoftware.holograms.api.actions.ClickType;
 import eu.decentsoftware.holograms.api.utils.Common;
 import eu.decentsoftware.holograms.api.utils.exception.LocationParseException;
 import eu.decentsoftware.holograms.api.utils.file.FileUtils;
-import eu.decentsoftware.holograms.api.utils.scheduler.S;
 import eu.decentsoftware.holograms.api.utils.tick.Ticked;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
@@ -52,7 +51,7 @@ public class HologramManager extends Ticked {
         this.toLoad = new ConcurrentHashMap<>();
         this.register();
 
-        S.async(this::reload); // Reload when worlds are ready
+        DecentHologramsAPI.getMorePaperLib().scheduling().asyncScheduler().run(this::reload); // Reload when worlds are ready
     }
 
     @Override
@@ -104,7 +103,7 @@ public class HologramManager extends Ticked {
         HologramLine line = new HologramLine(null, location, content);
         temporaryLines.add(line);
         line.show();
-        S.async(() -> {
+        DecentHologramsAPI.getMorePaperLib().scheduling().regionSpecificScheduler(location).runDelayed(()-> {
             line.destroy();
             temporaryLines.remove(line);
         }, duration);

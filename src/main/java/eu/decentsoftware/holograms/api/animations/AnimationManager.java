@@ -6,7 +6,6 @@ import eu.decentsoftware.holograms.api.animations.custom.CustomTextAnimation;
 import eu.decentsoftware.holograms.api.animations.text.*;
 import eu.decentsoftware.holograms.api.utils.Common;
 import eu.decentsoftware.holograms.api.utils.file.FileUtils;
-import eu.decentsoftware.holograms.api.utils.scheduler.S;
 import eu.decentsoftware.holograms.api.utils.tick.Ticked;
 import lombok.NonNull;
 
@@ -53,7 +52,7 @@ public class AnimationManager extends Ticked {
         this.register();
 
         // Load custom animations asynchronously
-        S.async(this::loadCustomAnimations);
+        DecentHologramsAPI.getMorePaperLib().scheduling().asyncScheduler().run(this::loadCustomAnimations);
     }
 
     public long getStep() {
