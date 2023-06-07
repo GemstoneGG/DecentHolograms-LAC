@@ -21,8 +21,8 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
-        scheduler.entitySpecificScheduler(player).run(() -> DH.getHologramManager().updateVisibility(player), () -> {});
-        scheduler.entitySpecificScheduler(player).run(() -> DH.getPacketListener().hook(player), () -> {});
+        scheduler.regionSpecificScheduler(player.getLocation()).run(() -> DH.getHologramManager().updateVisibility(player));
+        scheduler.regionSpecificScheduler(player.getLocation()).run(() -> DH.getPacketListener().hook(player));
         if (DH.isUpdateAvailable() && player.hasPermission("dh.admin")) {
             Lang.sendUpdateMessage(player);
         }
@@ -31,20 +31,20 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
         Player player = e.getPlayer();
-        scheduler.entitySpecificScheduler(player).run(() -> DH.getHologramManager().onQuit(player), () -> {});
+        scheduler.regionSpecificScheduler(player.getLocation()).run(() -> DH.getHologramManager().onQuit(player));
         DH.getPacketListener().unhook(player);
     }
 
     @EventHandler
     public void onRespawn(PlayerRespawnEvent e) {
         Player player = e.getPlayer();
-        scheduler.entitySpecificScheduler(player).run(() -> DH.getHologramManager().updateVisibility(player), () -> {});
+        scheduler.regionSpecificScheduler(player.getLocation()).run(() -> DH.getHologramManager().updateVisibility(player));
     }
 
     @EventHandler
     public void onTeleport(PlayerTeleportEvent e) {
         Player player = e.getPlayer();
-        scheduler.entitySpecificScheduler(player).run(() -> DH.getHologramManager().updateVisibility(player), () -> {});
+        scheduler.regionSpecificScheduler(player.getLocation()).run(() -> DH.getHologramManager().updateVisibility(player));
     }
 
 }
