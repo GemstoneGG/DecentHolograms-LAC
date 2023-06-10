@@ -38,13 +38,13 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onRespawn(PlayerRespawnEvent e) {
         Player player = e.getPlayer();
-        scheduler.regionSpecificScheduler(player.getLocation()).run(() -> DH.getHologramManager().updateVisibility(player));
+        scheduler.regionSpecificScheduler(player.getLocation()).run(() -> DH.getHologramManager().hideAll(player));
     }
 
     @EventHandler
     public void onTeleport(PlayerTeleportEvent e) {
         Player player = e.getPlayer();
-        scheduler.regionSpecificScheduler(player.getLocation()).run(() -> DH.getHologramManager().updateVisibility(player));
+        scheduler.regionSpecificScheduler(player.getLocation()).run(() -> DH.getHologramManager().hideAll(player));
     }
 
 }
