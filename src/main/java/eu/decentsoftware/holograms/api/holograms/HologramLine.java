@@ -119,16 +119,16 @@ public class HologramLine extends HologramObject {
      *	Fields
      */
 
-    private final @Nullable HologramPage parent;
-    private final @NonNull Map<UUID, String> playerTextMap = new ConcurrentHashMap<>();
-    private final @NonNull Map<UUID, String> lastTextMap = new ConcurrentHashMap<>();
+    private final HologramPage parent;
+    private final Map<UUID, String> playerTextMap = new ConcurrentHashMap<>();
+    private final Map<UUID, String> lastTextMap = new ConcurrentHashMap<>();
     private HologramLineType type;
     private int[] entityIds = new int[2];
-    private final @NonNull AtomicDouble offsetX = new AtomicDouble(0d);
-    private final @NonNull AtomicDouble offsetY = new AtomicDouble(0d);
-    private final @NonNull AtomicDouble offsetZ = new AtomicDouble(0d);
+    private final AtomicDouble offsetX = new AtomicDouble(0d);
+    private final AtomicDouble offsetY = new AtomicDouble(0d);
+    private final AtomicDouble offsetZ = new AtomicDouble(0d);
     private double height;
-    private @NonNull String content;
+    private String content;
     private String text;
     private HologramItem item;
     private HologramEntity entity;
@@ -196,10 +196,6 @@ public class HologramLine extends HologramObject {
     public void disable() {
         super.disable();
         this.hide();
-    }
-
-    public boolean hasParent() {
-        return parent != null;
     }
 
     /**
@@ -343,8 +339,8 @@ public class HologramLine extends HologramObject {
     private String parsePlaceholders(@NotNull String string, @NonNull Player player, boolean papi) {
         // Replace internal placeholders.
         string = string.replace("{player}", player.getName());
-        string = string.replace("{page}", String.valueOf(hasParent() ? parent.getIndex() + 1 : 1));
-        string = string.replace("{pages}", String.valueOf(hasParent() ? parent.getParent().size() : 1));
+        string = string.replace("{page}", String.valueOf(parent != null ? parent.getIndex() + 1 : 1));
+        string = string.replace("{pages}", String.valueOf(parent != null ? parent.getParent().size() : 1));
 
         // Replace PlaceholderAPI placeholders.
         if (papi) {
@@ -362,7 +358,7 @@ public class HologramLine extends HologramObject {
     @NonNull
     // Parses custom replacements that can be defined in the config
     private String parseCustomReplacements() {
-        if (content != null && !content.isEmpty()) {
+        if (!content.isEmpty()) {
             for (Map.Entry<String, String> replacement : Settings.CUSTOM_REPLACEMENTS.entrySet()) {
                 content = content.replace(replacement.getKey(), replacement.getValue());
             }

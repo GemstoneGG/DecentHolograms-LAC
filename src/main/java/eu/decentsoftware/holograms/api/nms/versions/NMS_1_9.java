@@ -3,8 +3,11 @@ package eu.decentsoftware.holograms.api.nms.versions;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import eu.decentsoftware.holograms.api.nms.NMS;
-import eu.decentsoftware.holograms.api.utils.RandomUtils;
-import eu.decentsoftware.holograms.api.utils.reflect.*;
+import eu.decentsoftware.holograms.api.utils.reflect.ReflectConstructor;
+import eu.decentsoftware.holograms.api.utils.reflect.ReflectField;
+import eu.decentsoftware.holograms.api.utils.reflect.ReflectMethod;
+import eu.decentsoftware.holograms.api.utils.reflect.ReflectionUtil;
+import eu.decentsoftware.holograms.api.utils.reflect.Version;
 import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -15,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class NMS_1_9 extends NMS {
@@ -314,7 +318,7 @@ public class NMS_1_9 extends NMS {
         sendPacket(player, teleport);
     }
 
-   private static Object ENUM_ITEM_SLOT_HEAD;
+    private static Object ENUM_ITEM_SLOT_HEAD;
 
     @Override
     public void helmetFakeEntity(Player player, ItemStack itemStack, int entityId) {
@@ -341,7 +345,7 @@ public class NMS_1_9 extends NMS {
         Object packet = PACKET_MOUNT_CONSTRUCTOR.newInstance();
         if (packet == null) return;
         ReflectionUtil.setFieldValue(packet, "a", vehicleId);
-        ReflectionUtil.setFieldValue(packet, "b", new int[] {entityId});
+        ReflectionUtil.setFieldValue(packet, "b", new int[]{entityId});
         sendPacket(player, packet);
     }
 
@@ -361,7 +365,7 @@ public class NMS_1_9 extends NMS {
         Object spawn = PACKET_SPAWN_ENTITY_LIVING_CONSTRUCTOR.newInstance();
         if (spawn == null) return;
         ReflectionUtil.setFieldValue(spawn, "a", entityId);
-        ReflectionUtil.setFieldValue(spawn, "b", MATH_HELPER_A_METHOD.invokeStatic(RandomUtils.RANDOM));
+        ReflectionUtil.setFieldValue(spawn, "b", MATH_HELPER_A_METHOD.invokeStatic(ThreadLocalRandom.current()));
         ReflectionUtil.setFieldValue(spawn, "c", entityTypeId);
         ReflectionUtil.setFieldValue(spawn, "d", location.getX());
         ReflectionUtil.setFieldValue(spawn, "e", location.getY());
@@ -381,7 +385,7 @@ public class NMS_1_9 extends NMS {
         Object spawn = PACKET_SPAWN_ENTITY_CONSTRUCTOR.newInstance();
         if (spawn == null) return;
         ReflectionUtil.setFieldValue(spawn, "a", entityId);
-        ReflectionUtil.setFieldValue(spawn, "b", MATH_HELPER_A_METHOD.invokeStatic(RandomUtils.RANDOM));
+        ReflectionUtil.setFieldValue(spawn, "b", MATH_HELPER_A_METHOD.invokeStatic(ThreadLocalRandom.current()));
         ReflectionUtil.setFieldValue(spawn, "c", location.getX());
         ReflectionUtil.setFieldValue(spawn, "d", location.getY());
         ReflectionUtil.setFieldValue(spawn, "e", location.getZ());

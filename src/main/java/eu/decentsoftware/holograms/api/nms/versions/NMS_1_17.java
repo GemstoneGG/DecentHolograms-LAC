@@ -1,8 +1,11 @@
 package eu.decentsoftware.holograms.api.nms.versions;
 
 import eu.decentsoftware.holograms.api.nms.NMS;
-import eu.decentsoftware.holograms.api.utils.RandomUtils;
-import eu.decentsoftware.holograms.api.utils.reflect.*;
+import eu.decentsoftware.holograms.api.utils.reflect.ReflectConstructor;
+import eu.decentsoftware.holograms.api.utils.reflect.ReflectField;
+import eu.decentsoftware.holograms.api.utils.reflect.ReflectMethod;
+import eu.decentsoftware.holograms.api.utils.reflect.ReflectionUtil;
+import eu.decentsoftware.holograms.api.utils.reflect.Version;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import org.apache.commons.lang.Validate;
@@ -12,7 +15,12 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class NMS_1_17 extends NMS {
@@ -296,7 +304,7 @@ public class NMS_1_17 extends NMS {
 
         Object packetDataSerializer = PACKET_DATA_SERIALIZER_CONSTRUCTOR.newInstance(Unpooled.buffer());
         PACKET_DATA_SERIALIZER_WRITE_INT_METHOD.invoke(packetDataSerializer, entityId);
-        PACKET_DATA_SERIALIZER_WRITE_UUID_METHOD.invoke(packetDataSerializer, MATH_HELPER_A_METHOD.<UUID>invokeStatic(RandomUtils.RANDOM));
+        PACKET_DATA_SERIALIZER_WRITE_UUID_METHOD.invoke(packetDataSerializer, MATH_HELPER_A_METHOD.<UUID>invokeStatic(ThreadLocalRandom.current()));
         PACKET_DATA_SERIALIZER_WRITE_INT_METHOD.invoke(packetDataSerializer, entityTypeId);
         PACKET_DATA_SERIALIZER_WRITE_DOUBLE_METHOD.invoke(packetDataSerializer, location.getX());
         PACKET_DATA_SERIALIZER_WRITE_DOUBLE_METHOD.invoke(packetDataSerializer, location.getY());
@@ -413,7 +421,7 @@ public class NMS_1_17 extends NMS {
         Validate.notNull(player);
         Object packetDataSerializer = PACKET_DATA_SERIALIZER_CONSTRUCTOR.newInstance(Unpooled.buffer());
         PACKET_DATA_SERIALIZER_WRITE_INT_METHOD.invoke(packetDataSerializer, vehicleId);
-        PACKET_DATA_SERIALIZER_WRITE_INTS_METHOD.invoke(packetDataSerializer, (Object) new int[] {entityId});
+        PACKET_DATA_SERIALIZER_WRITE_INTS_METHOD.invoke(packetDataSerializer, (Object) new int[]{entityId});
         sendPacket(player, PACKET_MOUNT_CONSTRUCTOR.newInstance(packetDataSerializer));
     }
 

@@ -557,7 +557,7 @@ public final class DHAPI {
         if (oldLine == null) {
             throw new IllegalArgumentException("Given line index is out of bounds for the hologram page.");
         }
-        HologramLine line = new HologramLine(page, oldLine.getLocation(), content);
+        HologramLine line = new HologramLine(page, oldLine.getLocation().clone(), content);
         page.insertLine(index, line);
         page.getParent().save();
         return line;
@@ -598,7 +598,7 @@ public final class DHAPI {
         Validate.notNull(line);
         Validate.notNull(content);
 
-        // If the new content is the same as current content, don't do anyting.
+        // If the new content is the same as current content, don't do anything.
         if (line.getContent().equals(content)) {
             return;
         }

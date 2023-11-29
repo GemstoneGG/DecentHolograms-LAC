@@ -1,7 +1,6 @@
 package eu.decentsoftware.holograms.api.holograms;
 
 import eu.decentsoftware.holograms.api.DecentHolograms;
-import eu.decentsoftware.holograms.api.DecentHologramsAPI;
 import eu.decentsoftware.holograms.api.Settings;
 import eu.decentsoftware.holograms.api.actions.ClickType;
 import eu.decentsoftware.holograms.api.utils.Common;
@@ -24,10 +23,10 @@ import java.util.logging.Level;
  */
 public class HologramManager extends Ticked {
 
-    private static final DecentHolograms DECENT_HOLOGRAMS = DecentHologramsAPI.get();
-    private final @NonNull Map<String, Hologram> hologramMap;
-    private final @NonNull Map<UUID, Long> clickCooldowns;
-    private final @NonNull Set<HologramLine> temporaryLines;
+    private final DecentHolograms decentHolograms;
+    private final Map<String, Hologram> hologramMap = new ConcurrentHashMap<>();
+    private final Map<UUID, Long> clickCooldowns = new ConcurrentHashMap<>();
+    private final Set<HologramLine> temporaryLines = ConcurrentHashMap.newKeySet();
 
     /**
      * Map of holograms to load, when their respective world loads.
@@ -41,14 +40,11 @@ public class HologramManager extends Ticked {
      *
      * @since 2.7.4
      */
-    private final @NonNull Map<String, Set<String>> toLoad;
+    private final Map<String, Set<String>> toLoad = new ConcurrentHashMap<>();
 
-    public HologramManager() {
+    public HologramManager(DecentHolograms decentHolograms) {
         super(20L);
-        this.hologramMap = new ConcurrentHashMap<>();
-        this.clickCooldowns = new ConcurrentHashMap<>();
-        this.temporaryLines = ConcurrentHashMap.newKeySet();
-        this.toLoad = new ConcurrentHashMap<>();
+        this.decentHolograms = decentHolograms;
         this.register();
 
         DecentHologramsAPI.getMorePaperLib().scheduling().asyncScheduler().run(this::reload); // Reload when worlds are ready
@@ -227,10 +223,9 @@ public class HologramManager extends Ticked {
      * Register a new hologram.
      *
      * @param hologram New hologram.
-     * @return The new hologram or null if it wasn't registered successfully.
      */
-    public Hologram registerHologram(@NonNull Hologram hologram) {
-        return hologramMap.put(hologram.getName(), hologram);
+    public void registerHologram(@NonNull Hologram hologram) {
+        hologramMap.put(hologram.getName(), hologram);
     }
 
     /**
@@ -280,18 +275,18 @@ public class HologramManager extends Ticked {
     private void loadHolograms() {
         hologramMap.clear();
 
-        final File folder = new File(DECENT_HOLOGRAMS.getDataFolder(), "holograms");
-        final List<File> files = FileUtils.getFilesFromTree(folder, Common.NAME_REGEX + "\\.yml", true);
-        if (files == null || files.isEmpty()) {
+        File folder = new File(decentHolograms.getDataFolder(), "holograms");
+        List<File> files = FileUtils.getFilesFromTree(folder, Common.NAME_REGEX + "\\.yml", true);
+        if (files.isEmpty()) {
             return;
         }
 
         int counter = 0;
         Common.log("Loading holograms... ");
-        for (final File file : files) {
-            final String filePath = FileUtils.getRelativePath(file, folder);
+        for (File file : files) {
+            String filePath = FileUtils.getRelativePath(file, folder);
             try {
-                final Hologram hologram = Hologram.fromFile(filePath);
+                Hologram hologram = Hologram.fromFile(filePath);
                 if (hologram.isEnabled()) {
                     hologram.showAll();
                     hologram.realignLines();
@@ -300,15 +295,14 @@ public class HologramManager extends Ticked {
                 counter++;
             } catch (LocationParseException e) {
                 // This hologram will load when its world loads.
-                final String worldName = e.getWorldName();
+                String worldName = e.getWorldName();
                 if (!toLoad.containsKey(worldName)) {
                     toLoad.put(worldName, new HashSet<>());
                 }
                 toLoad.get(worldName).add(filePath);
                 counter++;
             } catch (Exception e) {
-                Common.log(Level.WARNING, "Failed to load hologram from file '%s'!", filePath);
-                e.printStackTrace();
+                decentHolograms.getLogger().log(Level.WARNING, String.format("Failed to load hologram from file '%s'!", filePath), e);
             }
         }
         Common.log("Loaded %d holograms!", counter);
