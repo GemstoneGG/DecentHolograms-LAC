@@ -23,24 +23,24 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @CommandInfo(
-		aliases = {"holograms", "hologram", "dh", "holo"},
-		permission = "dh.default",
-		usage = "/dh <args>",
-		description = "The main DecentHolograms Command."
+        aliases = {"holograms", "hologram", "dh", "holo"},
+        permission = "dh.default",
+        usage = "/dh <args>",
+        description = "The main DecentHolograms Command."
 )
 public class HologramsCommand extends DecentCommand {
 
-	public HologramsCommand() {
-		super("decentholograms");
+    public HologramsCommand() {
+        super("decentholograms");
 
-		addSubCommand(new HelpSubCommand());
-		addSubCommand(new ReloadSubCommand());
-		addSubCommand(new ListSubCommand());
-		addSubCommand(new HologramSubCommand());
-		addSubCommand(new LineSubCommand());
-		addSubCommand(new FeatureSubCommand());
-		addSubCommand(new PageSubCommand());
-		addSubCommand(new ConvertSubCommand());
+        addSubCommand(new HelpSubCommand());
+        addSubCommand(new ReloadSubCommand());
+        addSubCommand(new ListSubCommand());
+        addSubCommand(new HologramSubCommand());
+        addSubCommand(new LineSubCommand());
+        addSubCommand(new FeatureSubCommand());
+        addSubCommand(new PageSubCommand());
+        addSubCommand(new ConvertSubCommand());
         addSubCommand(new VersionSubCommand());
 //        addSubCommand(new TestSubCommand());
 
@@ -57,29 +57,29 @@ public class HologramsCommand extends DecentCommand {
         addSubCommand(new HologramSubCommand.HologramTeleportSub());
         addSubCommand(new HologramSubCommand.HologramMoveSub());
         addSubCommand(new HologramSubCommand.HologramMovehereSub());
-	}
+    }
 
-	@Override
-	public CommandHandler getCommandHandler() {
-		return (sender, args) -> {
-			if (sender.hasPermission("dh.admin")) {
-				if (args.length == 0) {
-					Lang.USE_HELP.send(sender);
-					return true;
-				}
-				Lang.UNKNOWN_SUB_COMMAND.send(sender);
-				Lang.USE_HELP.send(sender);
-			} else {
+    @Override
+    public CommandHandler getCommandHandler() {
+        return (sender, args) -> {
+            if (sender.hasPermission("dh.admin")) {
+                if (args.length == 0) {
+                    Lang.USE_HELP.send(sender);
+                    return true;
+                }
+                Lang.UNKNOWN_SUB_COMMAND.send(sender);
+                Lang.USE_HELP.send(sender);
+            } else {
                 Lang.sendVersionMessage(sender);
             }
-			return true;
-		};
-	}
+            return true;
+        };
+    }
 
-	@Override
-	public TabCompleteHandler getTabCompleteHandler() {
-		return null;
-	}
+    @Override
+    public TabCompleteHandler getTabCompleteHandler() {
+        return null;
+    }
 
     /*
      *  SubCommands
@@ -215,7 +215,7 @@ public class HologramsCommand extends DecentCommand {
 
                 List<String> pages = new ArrayList<>();
                 int page = 0;
-                while(holograms > 0) {
+                while (holograms > 0) {
                     page++;
                     pages.add(String.valueOf(page));
                     holograms -= 15;

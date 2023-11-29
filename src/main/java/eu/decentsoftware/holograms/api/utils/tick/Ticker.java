@@ -25,7 +25,9 @@ public class Ticker {
         this.newTickedObjects = new DList<>(64);
         this.removeTickedObjects = new DList<>(64);
         this.performingTick = false;
-        this.task = DecentHologramsAPI.getMorePaperLib().scheduling().globalRegionalScheduler().runAtFixedRate(() -> {if (!performingTick) tick();}, 1L, 5L);
+        this.task = DecentHologramsAPI.getMorePaperLib().scheduling().globalRegionalScheduler().runAtFixedRate(() -> {
+            if (!performingTick) tick();
+        }, 1L, 5L);
     }
 
     /**

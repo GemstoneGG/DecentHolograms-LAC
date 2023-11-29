@@ -22,26 +22,6 @@ import java.util.Map;
 
 public abstract class ActionType {
 
-    private static final DecentHolograms DECENT_HOLOGRAMS = DecentHologramsAPI.get();
-
-    /*
-     * Cache
-     */
-
-    private static final Map<String, ActionType> VALUES = Maps.newHashMap();
-
-    public static ActionType getByName(String name) {
-        return VALUES.get(name.toUpperCase());
-    }
-
-    public static Collection<ActionType> getActionTypes() {
-        return VALUES.values();
-    }
-
-    /*
-     * Actions
-     */
-
     public static final ActionType NONE = new ActionType("NONE") {
         @Override
         public boolean execute(Player player, String... args) {
@@ -49,6 +29,9 @@ public abstract class ActionType {
         }
     };
 
+    /*
+     * Cache
+     */
     public static final ActionType MESSAGE = new ActionType("MESSAGE") {
         @Override
         public boolean execute(Player player, String... args) {
@@ -59,35 +42,6 @@ public abstract class ActionType {
             return true;
         }
     };
-
-    public static final ActionType COMMAND = new ActionType("COMMAND") {
-        @Override
-        public boolean execute(Player player, String... args) {
-            Validate.notNull(player);
-
-            String string = String.join(" ", args);
-            Bukkit.getScheduler().runTask(DECENT_HOLOGRAMS.getPlugin(), () -> {
-                //
-                player.chat(PAPI.setPlaceholders(player, string.replace("{player}", player.getName())));
-            });
-            return true;
-        }
-    };
-
-    public static final ActionType CONSOLE = new ActionType("CONSOLE") {
-        @Override
-        public boolean execute(Player player, String... args) {
-            Validate.notNull(player);
-
-            String string = String.join(" ", args);
-            Bukkit.getScheduler().runTask(DECENT_HOLOGRAMS.getPlugin(), () -> {
-                //
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PAPI.setPlaceholders(player, string.replace("{player}", player.getName())));
-            });
-            return true;
-        }
-    };
-
     public static final ActionType CONNECT = new ActionType("CONNECT") {
         @Override
         public boolean execute(Player player, String... args) {
@@ -98,26 +52,6 @@ public abstract class ActionType {
             return true;
         }
     };
-
-    public static final ActionType TELEPORT = new ActionType("TELEPORT") {
-        @Override
-        public boolean execute(Player player, String... args) {
-            Validate.notNull(player);
-
-            String string = String.join(":", args);
-            String[] spl = string.split(":");
-            if (spl.length == 3 || spl.length == 5) {
-                string = player.getLocation().getWorld().getName() + ":" + string;
-            }
-            Location location = LocationUtils.asLocation(string);
-            if (location == null) {
-                return false;
-            }
-            Bukkit.getScheduler().runTask(DECENT_HOLOGRAMS.getPlugin(), () -> player.teleport(location));
-            return true;
-        }
-    };
-
     public static final ActionType SOUND = new ActionType("SOUND") {
         @Override
         public boolean execute(Player player, String... args) {
@@ -144,6 +78,9 @@ public abstract class ActionType {
         }
     };
 
+    /*
+     * Actions
+     */
     public static final ActionType PERMISSION = new ActionType("PERMISSION") {
         @Override
         public boolean execute(Player player, String... args) {
@@ -151,7 +88,6 @@ public abstract class ActionType {
             return args[0] != null && !args[0].trim().isEmpty() && player.hasPermission(args[0]);
         }
     };
-
     public static final ActionType NEXT_PAGE = new ActionType("NEXT_PAGE") {
         @Override
         public boolean execute(Player player, String... args) {
@@ -164,7 +100,6 @@ public abstract class ActionType {
             return true;
         }
     };
-
     public static final ActionType PREV_PAGE = new ActionType("PREV_PAGE") {
         @Override
         public boolean execute(Player player, String... args) {
@@ -177,7 +112,6 @@ public abstract class ActionType {
             return true;
         }
     };
-
     public static final ActionType PAGE = new ActionType("PAGE") {
         @Override
         public boolean execute(Player player, String... args) {
@@ -191,11 +125,52 @@ public abstract class ActionType {
             return true;
         }
     };
+    private static final DecentHolograms DECENT_HOLOGRAMS = DecentHologramsAPI.get();
+    public static final ActionType COMMAND = new ActionType("COMMAND") {
+        @Override
+        public boolean execute(Player player, String... args) {
+            Validate.notNull(player);
 
-    /*
-     * Abstract Methods
-     */
+            String string = String.join(" ", args);
+            Bukkit.getScheduler().runTask(DECENT_HOLOGRAMS.getPlugin(), () -> {
+                //
+                player.chat(PAPI.setPlaceholders(player, string.replace("{player}", player.getName())));
+            });
+            return true;
+        }
+    };
+    public static final ActionType CONSOLE = new ActionType("CONSOLE") {
+        @Override
+        public boolean execute(Player player, String... args) {
+            Validate.notNull(player);
 
+            String string = String.join(" ", args);
+            Bukkit.getScheduler().runTask(DECENT_HOLOGRAMS.getPlugin(), () -> {
+                //
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PAPI.setPlaceholders(player, string.replace("{player}", player.getName())));
+            });
+            return true;
+        }
+    };
+    public static final ActionType TELEPORT = new ActionType("TELEPORT") {
+        @Override
+        public boolean execute(Player player, String... args) {
+            Validate.notNull(player);
+
+            String string = String.join(":", args);
+            String[] spl = string.split(":");
+            if (spl.length == 3 || spl.length == 5) {
+                string = player.getLocation().getWorld().getName() + ":" + string;
+            }
+            Location location = LocationUtils.asLocation(string);
+            if (location == null) {
+                return false;
+            }
+            Bukkit.getScheduler().runTask(DECENT_HOLOGRAMS.getPlugin(), () -> player.teleport(location));
+            return true;
+        }
+    };
+    private static final Map<String, ActionType> VALUES = Maps.newHashMap();
     @Getter
     private final String name;
 
@@ -205,6 +180,18 @@ public abstract class ActionType {
             throw new IllegalArgumentException("ActionType " + name + " already exists!");
         }
         VALUES.put(this.name = name, this);
+    }
+
+    /*
+     * Abstract Methods
+     */
+
+    public static ActionType getByName(String name) {
+        return VALUES.get(name.toUpperCase());
+    }
+
+    public static Collection<ActionType> getActionTypes() {
+        return VALUES.values();
     }
 
     public abstract boolean execute(Player player, String... args);

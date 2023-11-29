@@ -16,17 +16,17 @@ public class DecentHologramsReloadEvent extends DecentHologramsEvent {
         super(true);
     }
 
-    @Override
-    public HandlerList getHandlers() {
-        return HANDLERS;
-    }
-
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }
 
     public static boolean isRegistered() {
         return HANDLERS.getRegisteredListeners().length > 0;
+    }
+
+    @Override
+    public HandlerList getHandlers() {
+        return HANDLERS;
     }
 
 }

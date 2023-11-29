@@ -16,62 +16,62 @@ import java.util.Map;
 @AllArgsConstructor
 public class ItemWrapper {
 
-	protected Material material;
-	protected String name;
-	protected String skullOwner;
-	protected String skullTexture;
-	protected int amount;
-	protected short durability;
-	protected List<String> lore;
-	protected Map<Enchantment, Integer> enchantments;
-	protected ItemFlag[] flags;
+    protected Material material;
+    protected String name;
+    protected String skullOwner;
+    protected String skullTexture;
+    protected int amount;
+    protected short durability;
+    protected List<String> lore;
+    protected Map<Enchantment, Integer> enchantments;
+    protected ItemFlag[] flags;
 
-	public boolean canParse() {
-		return material != null;
-	}
+    public boolean canParse() {
+        return material != null;
+    }
 
-	public ItemStack parse() {
-		ItemBuilder itemBuilder = buildCommon();
-		if (skullOwner != null) {
-			itemBuilder.withSkullOwner(skullOwner);
-		} else if (skullTexture != null) {
-			itemBuilder.withSkullTexture(skullTexture);
-		}
-		itemBuilder.withItemFlags(flags);
-		return itemBuilder.build();
-	}
+    public ItemStack parse() {
+        ItemBuilder itemBuilder = buildCommon();
+        if (skullOwner != null) {
+            itemBuilder.withSkullOwner(skullOwner);
+        } else if (skullTexture != null) {
+            itemBuilder.withSkullTexture(skullTexture);
+        }
+        itemBuilder.withItemFlags(flags);
+        return itemBuilder.build();
+    }
 
-	public ItemStack parse(Player player) {
-		return this.parseBuilder(player).build();
-	}
+    public ItemStack parse(Player player) {
+        return this.parseBuilder(player).build();
+    }
 
-	public ItemBuilder parseBuilder(Player player) {
-		ItemBuilder itemBuilder = buildCommon();
-		if (skullOwner != null) {
-			itemBuilder.withSkullOwner(skullOwner.equals("@") ? player.getName() : skullOwner);
-		} else if (skullTexture != null) {
-			itemBuilder.withSkullTexture(skullTexture);
-		}
-		itemBuilder.withItemFlags(flags);
-		return itemBuilder;
-	}
-	
-	private ItemBuilder buildCommon() {
-		ItemBuilder temp = new ItemBuilder(material == null ? Material.STONE : material)
-			.withAmount(amount)
-			.withDurability(durability);
-		
-		if (name != null) {
-			temp.withName(Common.colorize(name));
-		}
-		if (lore != null && !lore.isEmpty()) {
-			temp.withLore(Common.colorize(lore));
-		}
-		if (enchantments != null && !enchantments.isEmpty()) {
-			enchantments.forEach(temp::withEnchantment);
-		}
-		
-		return temp;
-	}
+    public ItemBuilder parseBuilder(Player player) {
+        ItemBuilder itemBuilder = buildCommon();
+        if (skullOwner != null) {
+            itemBuilder.withSkullOwner(skullOwner.equals("@") ? player.getName() : skullOwner);
+        } else if (skullTexture != null) {
+            itemBuilder.withSkullTexture(skullTexture);
+        }
+        itemBuilder.withItemFlags(flags);
+        return itemBuilder;
+    }
+
+    private ItemBuilder buildCommon() {
+        ItemBuilder temp = new ItemBuilder(material == null ? Material.STONE : material)
+                .withAmount(amount)
+                .withDurability(durability);
+
+        if (name != null) {
+            temp.withName(Common.colorize(name));
+        }
+        if (lore != null && !lore.isEmpty()) {
+            temp.withLore(Common.colorize(lore));
+        }
+        if (enchantments != null && !enchantments.isEmpty()) {
+            enchantments.forEach(temp::withEnchantment);
+        }
+
+        return temp;
+    }
 
 }

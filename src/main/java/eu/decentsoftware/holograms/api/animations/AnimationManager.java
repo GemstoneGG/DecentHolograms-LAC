@@ -1,6 +1,7 @@
 package eu.decentsoftware.holograms.api.animations;
 
 import eu.decentsoftware.holograms.api.DecentHolograms;
+import eu.decentsoftware.holograms.api.DecentHologramsAPI;
 import eu.decentsoftware.holograms.api.animations.custom.CustomTextAnimation;
 import eu.decentsoftware.holograms.api.animations.text.*;
 import eu.decentsoftware.holograms.api.utils.Common;

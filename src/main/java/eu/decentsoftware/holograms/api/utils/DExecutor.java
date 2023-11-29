@@ -14,6 +14,13 @@ public class DExecutor {
 
     private static boolean initialized = false;
     private static ExecutorService service;
+    private final @NonNull ExecutorService executor;
+    private final @NonNull DList<CompletableFuture<Void>> running;
+
+    DExecutor(@NonNull ExecutorService executor, int estimate) {
+        this.executor = executor;
+        this.running = new DList<>(estimate);
+    }
 
     /**
      * Initialize DExecutor. This method will set up ExecutorService for DecentHolograms.
@@ -92,14 +99,6 @@ public class DExecutor {
      */
     public static void execute(@NonNull Runnable runnable) {
         service.execute(runnable);
-    }
-
-    private final @NonNull ExecutorService executor;
-    private final @NonNull DList<CompletableFuture<Void>> running;
-
-    DExecutor(@NonNull ExecutorService executor, int estimate) {
-        this.executor = executor;
-        this.running = new DList<>(estimate);
     }
 
     /**

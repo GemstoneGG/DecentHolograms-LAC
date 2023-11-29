@@ -8,15 +8,15 @@ import org.bukkit.entity.EntityType;
 @AllArgsConstructor
 public class HologramEntity {
 
-	private final String content;
-	private EntityType type;
+    private final String content;
+    private EntityType type;
 
-	public HologramEntity(String string) {
-		this.content = string;
-		this.type = DecentEntityType.parseEntityType(content.trim());
-		if (this.type == null) {
-			this.type = EntityType.PIG;
-		}
-	}
+    public HologramEntity(String string) {
+        this.content = string;
+        this.type = DecentEntityType.parseEntityType(content.trim());
+        if (this.type == null) {
+            this.type = EntityType.PIG;
+        }
+    }
 
 }

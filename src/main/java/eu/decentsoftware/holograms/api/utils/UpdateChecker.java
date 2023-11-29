@@ -1,7 +1,7 @@
 package eu.decentsoftware.holograms.api.utils;
 
-import org.apache.commons.lang.Validate;
 import eu.decentsoftware.holograms.api.DecentHologramsAPI;
+import org.apache.commons.lang.Validate;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;

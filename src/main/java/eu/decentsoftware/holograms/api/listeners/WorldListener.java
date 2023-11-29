@@ -1,6 +1,7 @@
 package eu.decentsoftware.holograms.api.listeners;
 
 import eu.decentsoftware.holograms.api.DecentHolograms;
+import eu.decentsoftware.holograms.api.DecentHologramsAPI;
 import eu.decentsoftware.holograms.api.holograms.DisableCause;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
 import eu.decentsoftware.holograms.api.holograms.HologramManager;
@@ -10,12 +11,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
+import space.arim.morepaperlib.scheduling.GracefulScheduling;
 
 @SuppressWarnings("unused")
 public class WorldListener implements Listener {
 
-    private final DecentHolograms decentHolograms;
     private static final GracefulScheduling scheduler = DecentHologramsAPI.getMorePaperLib().scheduling();
+    private final DecentHolograms decentHolograms;
 
     public WorldListener(DecentHolograms decentHolograms) {
         this.decentHolograms = decentHolograms;
@@ -25,8 +27,7 @@ public class WorldListener implements Listener {
     public void onWorldUnload(WorldUnloadEvent event) {
         HologramManager hologramManager = decentHolograms.getHologramManager();
         World world = event.getWorld();
-
-        S.async(() -> hologramManager.getHolograms().stream()
+        scheduler.asyncScheduler().run(() -> hologramManager.getHolograms().stream()
                 .filter(Hologram::isEnabled)
                 .filter(hologram -> hologram.getLocation().getWorld().equals(world))
                 .forEach(hologram -> hologram.disable(DisableCause.WORLD_UNLOAD)));
@@ -37,7 +38,7 @@ public class WorldListener implements Listener {
         HologramManager hologramManager = decentHolograms.getHologramManager();
         World world = event.getWorld();
 
-        S.async(() -> {
+        scheduler.asyncScheduler().run(() -> {
             if (hologramManager.getToLoad().containsKey(world.getName())) {
                 hologramManager.getToLoad().get(world.getName()).forEach(fileName -> {
                     try {

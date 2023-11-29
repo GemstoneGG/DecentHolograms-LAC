@@ -19,15 +19,15 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class GHoloConverter implements IConvertor {
-    
+
     private static final DecentHolograms PLUGIN = DecentHologramsAPI.get();
     private static final Pattern GRADIENT = Pattern.compile("\\[(#[0-9a-f]{6}) (\\w+) (#[0-9a-f]{6})]", Pattern.CASE_INSENSITIVE);
-    
+
     @Override
-    public ConvertorResult convert(){
+    public ConvertorResult convert() {
         return convert(new File(PLUGIN.getDataFolder().getParent() + "/GHolo/data/", "h.data"));
     }
-    
+
     @Override
     public ConvertorResult convert(File file) {
         Common.log("Converting GHolo holograms...");
@@ -40,22 +40,22 @@ public class GHoloConverter implements IConvertor {
         ConvertorResult convertorResult = new ConvertorResult();
         for (String name : config.getConfigurationSection("H").getKeys(false)) {
             String path = "H." + name;
-            
+
             Location location = LocationUtils.asLocation(config.getString(path + ".l"));
-            if(location == null){
+            if (location == null) {
                 Common.log(Level.WARNING, "Cannot convert '%s'! Invalid location.", name);
                 convertorResult.addFailed();
                 continue;
             }
-            
+
             List<String> lines = prepareLines(config.getStringList(path + ".c"));
             ConverterCommon.createHologram(convertorResult, name, location, lines, PLUGIN);
         }
         return convertorResult;
     }
-    
+
     @Override
-    public List<String> prepareLines(List<String> lines){
+    public List<String> prepareLines(List<String> lines) {
         return lines.stream().map(line -> {
             line = line.replace("[x]", "\u2588");
             line = line.replace("[X]", "\u2588");

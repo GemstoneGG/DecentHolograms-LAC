@@ -23,11 +23,11 @@ public class HologramPage extends FlagHolder {
      *	Fields
      */
 
-    private int index;
     private final Hologram parent;
     private final List<Integer> clickableEntityIds = new ArrayList<>();
     private final List<HologramLine> lines = new ArrayList<>();
     private final Map<ClickType, List<Action>> actions = new EnumMap<>(ClickType.class);
+    private int index;
 
     /*
      *	Constructors

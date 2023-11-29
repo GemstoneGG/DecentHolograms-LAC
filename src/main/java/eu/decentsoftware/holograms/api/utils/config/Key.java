@@ -11,7 +11,7 @@ public @interface Key {
 
     String value();
 
-    double min() default - Double.MAX_VALUE;
+    double min() default -Double.MAX_VALUE;
 
     double max() default Double.MAX_VALUE;
 

@@ -9,41 +9,41 @@ import eu.decentsoftware.holograms.api.utils.Common;
 import java.util.List;
 
 @CommandInfo(
-		permission = "dh.admin",
-		usage = "/dh features help",
-		description = "All commands for managing features.",
-		aliases = {"feature", "f"}
+        permission = "dh.admin",
+        usage = "/dh features help",
+        description = "All commands for managing features.",
+        aliases = {"feature", "f"}
 )
 public class FeatureSubCommand extends DecentCommand {
 
-	public FeatureSubCommand() {
-		super("features");
+    public FeatureSubCommand() {
+        super("features");
 
-		addSubCommand(new FeatureHelpSub());
-		addSubCommand(new FeatureListSub());
-		addSubCommand(new FeatureInfoSub());
-		addSubCommand(new FeatureEnableSub());
-		addSubCommand(new FeatureDisableSub());
-		addSubCommand(new FeatureReloadSub());
-	}
+        addSubCommand(new FeatureHelpSub());
+        addSubCommand(new FeatureListSub());
+        addSubCommand(new FeatureInfoSub());
+        addSubCommand(new FeatureEnableSub());
+        addSubCommand(new FeatureDisableSub());
+        addSubCommand(new FeatureReloadSub());
+    }
 
-	@Override
-	public CommandHandler getCommandHandler() {
-		return (sender, args) -> {
-			if (args.length == 0) {
-				Lang.USE_HELP.send(sender);
-				return true;
-			}
-			Lang.UNKNOWN_SUB_COMMAND.send(sender);
-			Lang.USE_HELP.send(sender);
-			return true;
-		};
-	}
+    @Override
+    public CommandHandler getCommandHandler() {
+        return (sender, args) -> {
+            if (args.length == 0) {
+                Lang.USE_HELP.send(sender);
+                return true;
+            }
+            Lang.UNKNOWN_SUB_COMMAND.send(sender);
+            Lang.USE_HELP.send(sender);
+            return true;
+        };
+    }
 
-	@Override
-	public TabCompleteHandler getTabCompleteHandler() {
-		return null;
-	}
+    @Override
+    public TabCompleteHandler getTabCompleteHandler() {
+        return null;
+    }
 
     /*
      *  SubCommands

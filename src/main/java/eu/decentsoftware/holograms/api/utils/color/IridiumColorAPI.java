@@ -19,9 +19,8 @@ import java.util.Map;
 
 public class IridiumColorAPI {
 
-    private static final ReflectMethod METHOD_OF = new ReflectMethod(ChatColor.class, "of", Color.class);
     public static final List<String> SPECIAL_COLORS = Arrays.asList("&l", "&n", "&o", "&k", "&m");
-
+    private static final ReflectMethod METHOD_OF = new ReflectMethod(ChatColor.class, "of", Color.class);
     private static final LruCache LRU_CACHE = new LruCache(Settings.DEFAULT_LRU_CACHE_SIZE);
 
     /**
@@ -167,8 +166,8 @@ public class IridiumColorAPI {
     /**
      * Removes all color codes from the provided String, including IridiumColorAPI patterns.
      *
-     * @param string    The String which should be stripped
-     * @return          The stripped string without color codes
+     * @param string The String which should be stripped
+     * @return The stripped string without color codes
      * @since 1.0.5
      */
     @Nonnull
@@ -214,7 +213,7 @@ public class IridiumColorAPI {
         if (step <= 1) {
             return new ChatColor[]{ChatColor.WHITE, ChatColor.WHITE, ChatColor.WHITE};
         }
-        
+
         ChatColor[] colors = new ChatColor[step];
         int stepR = Math.abs(start.getRed() - end.getRed()) / (step - 1);
         int stepG = Math.abs(start.getGreen() - end.getGreen()) / (step - 1);

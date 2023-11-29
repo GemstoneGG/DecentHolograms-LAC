@@ -1,6 +1,7 @@
 package eu.decentsoftware.holograms.api.holograms;
 
 import eu.decentsoftware.holograms.api.DecentHolograms;
+import eu.decentsoftware.holograms.api.DecentHologramsAPI;
 import eu.decentsoftware.holograms.api.Settings;
 import eu.decentsoftware.holograms.api.actions.ClickType;
 import eu.decentsoftware.holograms.api.utils.Common;
@@ -99,7 +100,7 @@ public class HologramManager extends Ticked {
         HologramLine line = new HologramLine(null, location, content);
         temporaryLines.add(line);
         line.show();
-        DecentHologramsAPI.getMorePaperLib().scheduling().regionSpecificScheduler(location).runDelayed(()-> {
+        DecentHologramsAPI.getMorePaperLib().scheduling().regionSpecificScheduler(location).runDelayed(() -> {
             line.destroy();
             temporaryLines.remove(line);
         }, duration);

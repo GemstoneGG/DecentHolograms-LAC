@@ -9,7 +9,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -21,9 +23,9 @@ public abstract class HologramObject extends FlagHolder {
      *	Fields
      */
 
+    protected final Set<UUID> viewers = ConcurrentHashMap.newKeySet();
     protected boolean enabled = true;
     protected DisableCause cause = DisableCause.NONE;
-    protected final Set<UUID> viewers = ConcurrentHashMap.newKeySet();
     protected Location location;
     protected String permission = null;
     protected float facing = 0.0f;

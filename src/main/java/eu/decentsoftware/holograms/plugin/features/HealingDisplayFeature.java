@@ -20,88 +20,88 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class HealingDisplayFeature extends AbstractFeature implements Listener {
 
-	private static final DecentHolograms PLUGIN = DecentHologramsAPI.get();
-	private int duration = 40;
-	private String appearance = "&a+ {heal}";
-	private boolean displayForPlayers = true;
-	private boolean displayForMobs = true;
-	private double heightOffset = 0.0;
+    private static final DecentHolograms PLUGIN = DecentHologramsAPI.get();
+    private int duration = 40;
+    private String appearance = "&a+ {heal}";
+    private boolean displayForPlayers = true;
+    private boolean displayForMobs = true;
+    private double heightOffset = 0.0;
 
-	public HealingDisplayFeature() {
-		super("healing_display");
-		this.reload();
-	}
+    public HealingDisplayFeature() {
+        super("healing_display");
+        this.reload();
+    }
 
-	@Override
-	public void reload() {
-		this.disable();
+    @Override
+    public void reload() {
+        this.disable();
 
-		FileConfig config = Settings.getConfig();
-		enabled = config.getBoolean("healing-display.enabled", enabled);
-		duration = config.getInt("healing-display.duration", duration);
-		appearance = config.getString("healing-display.appearance", appearance);
+        FileConfig config = Settings.getConfig();
+        enabled = config.getBoolean("healing-display.enabled", enabled);
+        duration = config.getInt("healing-display.duration", duration);
+        appearance = config.getString("healing-display.appearance", appearance);
 
-		heightOffset = config.getDouble("healing-display.height", heightOffset);
+        heightOffset = config.getDouble("healing-display.height", heightOffset);
 
-		displayForPlayers = config.getBoolean("damage-display.players", displayForPlayers);
-		displayForMobs = config.getBoolean("damage-display.mobs", displayForMobs);
+        displayForPlayers = config.getBoolean("damage-display.players", displayForPlayers);
+        displayForMobs = config.getBoolean("damage-display.mobs", displayForMobs);
 
-		if (enabled) {
-			this.enable();
-		}
-	}
+        if (enabled) {
+            this.enable();
+        }
+    }
 
-	@Override
-	public void enable() {
-		JavaPlugin javaPlugin = PLUGIN.getPlugin();
-		javaPlugin.getServer().getPluginManager().registerEvents(this, javaPlugin);
-		this.enabled = true;
-	}
+    @Override
+    public void enable() {
+        JavaPlugin javaPlugin = PLUGIN.getPlugin();
+        javaPlugin.getServer().getPluginManager().registerEvents(this, javaPlugin);
+        this.enabled = true;
+    }
 
-	@Override
-	public void disable() {
-		HandlerList.unregisterAll(this);
-		this.enabled = false;
-	}
+    @Override
+    public void disable() {
+        HandlerList.unregisterAll(this);
+        this.enabled = false;
+    }
 
-	@Override
-	public void destroy() {
-		this.disable();
-	}
+    @Override
+    public void destroy() {
+        this.disable();
+    }
 
-	@Override
-	public String getDescription() {
-		return "Spawn a temporary hologram displaying heals.";
-	}
+    @Override
+    public String getDescription() {
+        return "Spawn a temporary hologram displaying heals.";
+    }
 
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onRegain(EntityRegainHealthEvent e) {
-		if (e.isCancelled()) {
-			return;
-		}
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onRegain(EntityRegainHealthEvent e) {
+        if (e.isCancelled()) {
+            return;
+        }
 
-		double heal = e.getAmount();
-		if (heal <= 0d) {
-			return;
-		}
+        double heal = e.getAmount();
+        if (heal <= 0d) {
+            return;
+        }
 
-		Entity entity = e.getEntity();
+        Entity entity = e.getEntity();
 
-		if (!(entity instanceof LivingEntity) || entity instanceof ArmorStand) {
-			return;
-		}
+        if (!(entity instanceof LivingEntity) || entity instanceof ArmorStand) {
+            return;
+        }
 
-		if (entity instanceof Player && !displayForPlayers) {
-			return;
-		}
+        if (entity instanceof Player && !displayForPlayers) {
+            return;
+        }
 
-		if (!(entity instanceof Player) && !displayForMobs) {
-			return;
-		}
+        if (!(entity instanceof Player) && !displayForMobs) {
+            return;
+        }
 
-		Location location = LocationUtils.randomizeLocation(entity.getLocation().clone().add(0, 1 + heightOffset, 0));
-		String text = appearance.replace("{heal}", FeatureCommons.formatNumber(heal));
-		PLUGIN.getHologramManager().spawnTemporaryHologramLine(location, text, duration);
-	}
+        Location location = LocationUtils.randomizeLocation(entity.getLocation().clone().add(0, 1 + heightOffset, 0));
+        String text = appearance.replace("{heal}", FeatureCommons.formatNumber(heal));
+        PLUGIN.getHologramManager().spawnTemporaryHologramLine(location, text, duration);
+    }
 
 }

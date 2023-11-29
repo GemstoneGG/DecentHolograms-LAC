@@ -16,12 +16,12 @@ import org.jetbrains.annotations.NotNull;
 public class HologramClickEvent extends DecentHologramsEvent implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
-    private boolean cancelled = false;
     private final @NotNull Player player;
     private final @NotNull Hologram hologram;
     private final @NotNull HologramPage page;
     private final @NotNull ClickType click;
     private final int entityId;
+    private boolean cancelled = false;
 
     public HologramClickEvent(@NotNull Player player, @NotNull Hologram hologram, @NotNull HologramPage page, @NotNull ClickType click, int entityId) {
         super(true);
@@ -30,6 +30,14 @@ public class HologramClickEvent extends DecentHologramsEvent implements Cancella
         this.page = page;
         this.click = click;
         this.entityId = entityId;
+    }
+
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
+
+    public static boolean isRegistered() {
+        return HANDLERS.getRegisteredListeners().length > 0;
     }
 
     @Override
@@ -45,14 +53,6 @@ public class HologramClickEvent extends DecentHologramsEvent implements Cancella
     @Override
     public HandlerList getHandlers() {
         return HANDLERS;
-    }
-
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
-    }
-
-    public static boolean isRegistered() {
-        return HANDLERS.getRegisteredListeners().length > 0;
     }
 
 }

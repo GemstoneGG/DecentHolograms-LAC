@@ -7,7 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class Pair<K, V> {
 
-	private K key;
-	private V value;
+    private K key;
+    private V value;
 
 }

@@ -9,16 +9,16 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CommandInfo {
 
-	String[] aliases() default {};
+    String[] aliases() default {};
 
-	String permission();
+    String permission();
 
-	boolean playerOnly() default false;
+    boolean playerOnly() default false;
 
-	int minArgs() default 0;
+    int minArgs() default 0;
 
-	String usage();
+    String usage();
 
-	String description();
+    String description();
 
 }

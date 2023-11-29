@@ -5,8 +5,8 @@ package eu.decentsoftware.holograms.api.commands;
  */
 public class DecentCommandException extends Exception {
 
-	public DecentCommandException(String message) {
-		super(message);
-	}
+    public DecentCommandException(String message) {
+        super(message);
+    }
 
 }

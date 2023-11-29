@@ -13,28 +13,28 @@ import org.bukkit.plugin.java.JavaPlugin;
 @Getter
 public class DecentHologramsPlugin extends JavaPlugin {
 
-	@Override
-	public void onLoad() {
-		DecentHologramsAPI.onLoad(this);
-	}
+    @Override
+    public void onLoad() {
+        DecentHologramsAPI.onLoad(this);
+    }
 
-	@Override
-	public void onEnable() {
-		DecentHologramsAPI.onEnable();
+    @Override
+    public void onEnable() {
+        DecentHologramsAPI.onEnable();
 
-		DecentHolograms decentHolograms = DecentHologramsAPI.get();
-		decentHolograms.getFeatureManager().registerFeature(new DamageDisplayFeature());
-		decentHolograms.getFeatureManager().registerFeature(new HealingDisplayFeature());
+        DecentHolograms decentHolograms = DecentHologramsAPI.get();
+        decentHolograms.getFeatureManager().registerFeature(new DamageDisplayFeature());
+        decentHolograms.getFeatureManager().registerFeature(new HealingDisplayFeature());
 
-		CommandManager commandManager = decentHolograms.getCommandManager();
-		DecentCommand mainCommand = new HologramsCommand();
-		commandManager.setMainCommand(mainCommand);
-		commandManager.registerCommand(mainCommand);
-	}
+        CommandManager commandManager = decentHolograms.getCommandManager();
+        DecentCommand mainCommand = new HologramsCommand();
+        commandManager.setMainCommand(mainCommand);
+        commandManager.registerCommand(mainCommand);
+    }
 
-	@Override
-	public void onDisable() {
-		DecentHologramsAPI.onDisable();
-	}
+    @Override
+    public void onDisable() {
+        DecentHologramsAPI.onDisable();
+    }
 
 }

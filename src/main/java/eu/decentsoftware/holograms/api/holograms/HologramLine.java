@@ -39,6 +39,37 @@ public class HologramLine extends HologramObject {
     /*
      *	Static Methods
      */
+    private final HologramPage parent;
+    private final Map<UUID, String> playerTextMap = new ConcurrentHashMap<>();
+
+    /*
+     *	Fields
+     */
+    private final Map<UUID, String> lastTextMap = new ConcurrentHashMap<>();
+    private final AtomicDouble offsetX = new AtomicDouble(0d);
+    private final AtomicDouble offsetY = new AtomicDouble(0d);
+    private final AtomicDouble offsetZ = new AtomicDouble(0d);
+    private HologramLineType type;
+    private int[] entityIds = new int[2];
+    private double height;
+    private String content;
+    private String text;
+    private HologramItem item;
+    private HologramEntity entity;
+    private volatile boolean containsAnimations;
+    private volatile boolean containsPlaceholders;
+
+    public HologramLine(@Nullable HologramPage parent, @NonNull Location location, @NotNull String content) {
+        super(location);
+        this.parent = parent;
+        NMS nms = NMS.getInstance();
+        this.entityIds[0] = nms.getFreeEntityId();
+        this.entityIds[1] = nms.getFreeEntityId();
+        this.content = content;
+        this.type = HologramLineType.UNKNOWN;
+        this.height = Settings.DEFAULT_HEIGHT_TEXT;
+        this.parseContent();
+    }
 
     @NonNull
     public static HologramLine fromFile(@NonNull ConfigurationSection config, @Nullable HologramPage parent, @NonNull Location location) {
@@ -63,6 +94,10 @@ public class HologramLine extends HologramObject {
         }
         return line;
     }
+
+    /*
+     *	Constructors
+     */
 
     @NonNull
     @SuppressWarnings("unchecked")
@@ -113,43 +148,6 @@ public class HologramLine extends HologramObject {
             }
         }
         return line;
-    }
-
-    /*
-     *	Fields
-     */
-
-    private final HologramPage parent;
-    private final Map<UUID, String> playerTextMap = new ConcurrentHashMap<>();
-    private final Map<UUID, String> lastTextMap = new ConcurrentHashMap<>();
-    private HologramLineType type;
-    private int[] entityIds = new int[2];
-    private final AtomicDouble offsetX = new AtomicDouble(0d);
-    private final AtomicDouble offsetY = new AtomicDouble(0d);
-    private final AtomicDouble offsetZ = new AtomicDouble(0d);
-    private double height;
-    private String content;
-    private String text;
-    private HologramItem item;
-    private HologramEntity entity;
-
-    private volatile boolean containsAnimations;
-    private volatile boolean containsPlaceholders;
-
-    /*
-     *	Constructors
-     */
-
-    public HologramLine(@Nullable HologramPage parent, @NonNull Location location, @NotNull String content) {
-        super(location);
-        this.parent = parent;
-        NMS nms = NMS.getInstance();
-        this.entityIds[0] = nms.getFreeEntityId();
-        this.entityIds[1] = nms.getFreeEntityId();
-        this.content = content;
-        this.type = HologramLineType.UNKNOWN;
-        this.height = Settings.DEFAULT_HEIGHT_TEXT;
-        this.parseContent();
     }
 
     /*
@@ -537,20 +535,20 @@ public class HologramLine extends HologramObject {
         return offsetX.get();
     }
 
-    public double getOffsetY() {
-        return offsetY.get();
-    }
-
-    public double getOffsetZ() {
-        return offsetZ.get();
-    }
-
     public void setOffsetX(double offsetX) {
         this.offsetX.set(offsetX);
     }
 
+    public double getOffsetY() {
+        return offsetY.get();
+    }
+
     public void setOffsetY(double offsetY) {
         this.offsetY.set(offsetY);
+    }
+
+    public double getOffsetZ() {
+        return offsetZ.get();
     }
 
     public void setOffsetZ(double offsetZ) {

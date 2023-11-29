@@ -1,11 +1,7 @@
 package eu.decentsoftware.holograms.api.nms.versions;
 
 import eu.decentsoftware.holograms.api.nms.NMS;
-import eu.decentsoftware.holograms.api.utils.reflect.ReflectConstructor;
-import eu.decentsoftware.holograms.api.utils.reflect.ReflectField;
-import eu.decentsoftware.holograms.api.utils.reflect.ReflectMethod;
-import eu.decentsoftware.holograms.api.utils.reflect.ReflectionUtil;
-import eu.decentsoftware.holograms.api.utils.reflect.Version;
+import eu.decentsoftware.holograms.api.utils.reflect.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import org.apache.commons.lang.Validate;
@@ -15,11 +11,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -79,6 +71,14 @@ public class NMS_1_17 extends NMS {
 
     private static final ReflectField<AtomicInteger> ENTITY_COUNTER_FIELD;
     private static final Object VEC_3D_A;
+    private static final Class<?> DWR_CLASS = ReflectionUtil.getNMClass("network.syncher.DataWatcherRegistry");
+    private static final ReflectMethod DWI_GET_OBJECT_METHOD = new ReflectMethod(DWI_CLASS, "a");
+    private static final ReflectMethod DWI_GET_VALUE_METHOD = new ReflectMethod(DWI_CLASS, "b");
+    private static final ReflectMethod DWO_GET_SERIALIZER_METHOD = new ReflectMethod(DWO_CLASS, "b");
+    private static final ReflectMethod DWO_GET_INDEX_METHOD = new ReflectMethod(DWO_CLASS, "a");
+    private static final ReflectMethod DWS_GET_TYPE_ID_METHOD = new ReflectMethod(DWR_CLASS, "b", DWS_CLASS);
+    private static final ReflectMethod DWS_SERIALIZE_METHOD = new ReflectMethod(DWS_CLASS, "a",
+            PACKET_DATA_SERIALIZER_CLASS, Object.class);
 
     static {
         DWO_CLASS = ReflectionUtil.getNMClass("network.syncher.DataWatcherObject");
@@ -317,15 +317,6 @@ public class NMS_1_17 extends NMS {
         PACKET_DATA_SERIALIZER_WRITE_SHORT_METHOD.invoke(packetDataSerializer, 0);
         sendPacket(player, PACKET_SPAWN_ENTITY_LIVING_CONSTRUCTOR.newInstance(packetDataSerializer));
     }
-
-    private static final Class<?> DWR_CLASS = ReflectionUtil.getNMClass("network.syncher.DataWatcherRegistry");
-    private static final ReflectMethod DWI_GET_OBJECT_METHOD = new ReflectMethod(DWI_CLASS, "a");
-    private static final ReflectMethod DWI_GET_VALUE_METHOD = new ReflectMethod(DWI_CLASS, "b");
-    private static final ReflectMethod DWO_GET_SERIALIZER_METHOD = new ReflectMethod(DWO_CLASS, "b");
-    private static final ReflectMethod DWO_GET_INDEX_METHOD = new ReflectMethod(DWO_CLASS, "a");
-    private static final ReflectMethod DWS_GET_TYPE_ID_METHOD = new ReflectMethod(DWR_CLASS, "b", DWS_CLASS);
-    private static final ReflectMethod DWS_SERIALIZE_METHOD = new ReflectMethod(DWS_CLASS, "a",
-            PACKET_DATA_SERIALIZER_CLASS, Object.class);
 
     private void sendEntityMetadata(Player player, int entityId, List<Object> items) {
         Validate.notNull(player);

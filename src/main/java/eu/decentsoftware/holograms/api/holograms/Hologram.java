@@ -28,13 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -70,6 +64,103 @@ public class Hologram extends UpdatingHologramObject implements ITicked {
         CACHED_HOLOGRAMS = new ConcurrentHashMap<>();
     }
 
+    /**
+     * The lock used to synchronize the saving process of this hologram.
+     *
+     * @implNote This lock is used to prevent multiple threads from saving
+     * the same hologram at the same time. This is important because the
+     * saving process is not thread-safe in SnakeYAML.
+     * @since 2.7.10
+     */
+    protected final Lock lock = new ReentrantLock();
+    /**
+     * This object server as a mutex for all visibility related operations.
+     * <p>
+     * For example, when we want to hide a hologram, that's already being
+     * updated on another thread, we would need to wait for the update to
+     * finish before we can hide the hologram. That is because if we didn't,
+     * parts of the hologram might still be visible after the hide operation,
+     * due to the update process.
+     *
+     * @implNote This lock is used to prevent multiple threads from modifying
+     * the visibility of the same hologram at the same time. This is important
+     * because the visibility of a hologram is not thread-safe.
+     * @since 2.7.11
+     */
+    protected final Object visibilityMutex = new Object();
+    protected final @NonNull String name;
+
+    /*
+     *	Static Methods
+     */
+    protected final @Nullable FileConfig config;
+
+    /*
+     *	Fields
+     */
+    protected final @NonNull Map<UUID, Integer> viewerPages = new ConcurrentHashMap<>();
+    protected final @NonNull Set<UUID> hidePlayers = ConcurrentHashMap.newKeySet();
+    protected final @NonNull Set<UUID> showPlayers = ConcurrentHashMap.newKeySet();
+    protected final @NonNull DList<HologramPage> pages = new DList<>();
+    private final @NonNull AtomicInteger tickCounter;
+    protected boolean saveToFile;
+    protected boolean defaultVisibleState = true;
+    protected boolean downOrigin = Settings.DEFAULT_DOWN_ORIGIN;
+    protected boolean alwaysFacePlayer = false;
+    /**
+     * Creates a new hologram with the given name and location. The hologram will be saved to a file.
+     *
+     * @param name     The name of the hologram.
+     * @param location The location of the hologram.
+     */
+    public Hologram(@NonNull String name, @NonNull Location location) {
+        this(name, location, true);
+    }
+    /**
+     * Creates a new hologram with the given name and location.
+     *
+     * @param name       The name of the hologram.
+     * @param location   The location of the hologram.
+     * @param saveToFile Whether the hologram should be saved to a file.
+     */
+    public Hologram(@NonNull String name, @NonNull Location location, boolean saveToFile) {
+        this(name, location, saveToFile ? new FileConfig(DECENT_HOLOGRAMS.getPlugin(), String.format("holograms/%s.yml", name)) : null);
+    }
+    /**
+     * Creates a new hologram with the given name and location. The hologram will be saved to the given file.
+     *
+     * @param name     The name of the hologram.
+     * @param location The location of the hologram.
+     * @param config   The config of the hologram.
+     */
+    public Hologram(@NonNull String name, @NonNull Location location, @Nullable FileConfig config) {
+        this(name, location, config, true);
+    }
+    /**
+     * Creates a new hologram with the given name and location.
+     *
+     * @param name     The name of the hologram.
+     * @param location The location of the hologram.
+     * @param config   The config of the hologram.
+     * @param enabled  Whether the hologram should be enabled.
+     */
+    public Hologram(@NonNull String name, @NonNull Location location, @Nullable FileConfig config, boolean enabled) {
+        super(location);
+        this.name = name;
+        this.config = config;
+        this.enabled = enabled;
+        this.saveToFile = this.config != null;
+        this.tickCounter = new AtomicInteger();
+        this.addPage();
+        this.register();
+
+        CACHED_HOLOGRAMS.put(this.name, this);
+    }
+
+    /*
+     *	Constructors
+     */
+
     public static Hologram getCachedHologram(@NonNull String name) {
         return CACHED_HOLOGRAMS.get(name);
     }
@@ -85,10 +176,6 @@ public class Hologram extends UpdatingHologramObject implements ITicked {
     public static Collection<Hologram> getCachedHolograms() {
         return CACHED_HOLOGRAMS.values();
     }
-
-    /*
-     *	Static Methods
-     */
 
     @SuppressWarnings("unchecked")
     @NonNull
@@ -198,105 +285,6 @@ public class Hologram extends UpdatingHologramObject implements ITicked {
         }
         hologram.setFacing((float) config.getDouble("facing", 0.0f));
         return hologram;
-    }
-
-    /*
-     *	Fields
-     */
-
-    /**
-     * The lock used to synchronize the saving process of this hologram.
-     *
-     * @implNote This lock is used to prevent multiple threads from saving
-     * the same hologram at the same time. This is important because the
-     * saving process is not thread-safe in SnakeYAML.
-     * @since 2.7.10
-     */
-    protected final Lock lock = new ReentrantLock();
-
-    /**
-     * This object server as a mutex for all visibility related operations.
-     * <p>
-     * For example, when we want to hide a hologram, that's already being
-     * updated on another thread, we would need to wait for the update to
-     * finish before we can hide the hologram. That is because if we didn't,
-     * parts of the hologram might still be visible after the hide operation,
-     * due to the update process.
-     *
-     * @implNote This lock is used to prevent multiple threads from modifying
-     * the visibility of the same hologram at the same time. This is important
-     * because the visibility of a hologram is not thread-safe.
-     * @since 2.7.11
-     */
-    protected final Object visibilityMutex = new Object();
-
-    protected final @NonNull String name;
-    protected boolean saveToFile;
-    protected final @Nullable FileConfig config;
-    protected final @NonNull Map<UUID, Integer> viewerPages = new ConcurrentHashMap<>();
-    protected final @NonNull Set<UUID> hidePlayers = ConcurrentHashMap.newKeySet();
-    protected final @NonNull Set<UUID> showPlayers = ConcurrentHashMap.newKeySet();
-    protected boolean defaultVisibleState = true;
-    protected final @NonNull DList<HologramPage> pages = new DList<>();
-    protected boolean downOrigin = Settings.DEFAULT_DOWN_ORIGIN;
-    protected boolean alwaysFacePlayer = false;
-    private final @NonNull AtomicInteger tickCounter;
-
-    /*
-     *	Constructors
-     */
-
-    /**
-     * Creates a new hologram with the given name and location. The hologram will be saved to a file.
-     *
-     * @param name     The name of the hologram.
-     * @param location The location of the hologram.
-     */
-    public Hologram(@NonNull String name, @NonNull Location location) {
-        this(name, location, true);
-    }
-
-    /**
-     * Creates a new hologram with the given name and location.
-     *
-     * @param name       The name of the hologram.
-     * @param location   The location of the hologram.
-     * @param saveToFile Whether the hologram should be saved to a file.
-     */
-    public Hologram(@NonNull String name, @NonNull Location location, boolean saveToFile) {
-        this(name, location, saveToFile ? new FileConfig(DECENT_HOLOGRAMS.getPlugin(), String.format("holograms/%s.yml", name)) : null);
-    }
-
-    /**
-     * Creates a new hologram with the given name and location. The hologram will be saved to the given file.
-     *
-     * @param name     The name of the hologram.
-     * @param location The location of the hologram.
-     * @param config   The config of the hologram.
-     */
-    public Hologram(@NonNull String name, @NonNull Location location, @Nullable FileConfig config) {
-        this(name, location, config, true);
-    }
-
-    /**
-     * Creates a new hologram with the given name and location.
-     *
-     * @param name     The name of the hologram.
-     * @param location The location of the hologram.
-     * @param config   The config of the hologram.
-     * @param enabled  Whether the hologram should be enabled.
-     */
-    public Hologram(@NonNull String name, @NonNull Location location, @Nullable FileConfig config, boolean enabled) {
-        super(location);
-        this.name = name;
-        this.config = config;
-        this.enabled = enabled;
-        this.saveToFile = this.config != null;
-        this.tickCounter = new AtomicInteger();
-        this.addPage();
-        this.register();
-
-        CACHED_HOLOGRAMS.put(this.name, this);
     }
 
     /*
