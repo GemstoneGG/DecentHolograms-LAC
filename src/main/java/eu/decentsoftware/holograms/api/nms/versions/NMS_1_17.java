@@ -34,7 +34,7 @@ public class NMS_1_17 extends NMS {
     private static final Class<?> MATH_HELPER_CLASS;
     private static final ReflectMethod MATH_HELPER_A_METHOD;
     // PACKET DATA SERIALIZER
-    private static final Class<?> PACKET_DATA_SERIALIZER_CLASS;
+    private static final Class<?> PACKET_DATA_SERIALIZER_CLASS = ReflectionUtil.getNMClass("network.PacketDataSerializer");
     private static final ReflectConstructor PACKET_DATA_SERIALIZER_CONSTRUCTOR;
     private static final ReflectMethod PACKET_DATA_SERIALIZER_WRITE_INT_METHOD;
     private static final ReflectMethod PACKET_DATA_SERIALIZER_WRITE_UUID_METHOD;
@@ -52,9 +52,9 @@ public class NMS_1_17 extends NMS {
     private static final ReflectConstructor PACKET_ENTITY_EQUIPMENT_CONSTRUCTOR;
     private static final ReflectConstructor PACKET_ENTITY_DESTROY_CONSTRUCTOR;
     // DATA WATCHER OBJECT
-    private static final Class<?> DWO_CLASS;
-    private static final Class<?> DWS_CLASS;
-    private static final Class<?> DWI_CLASS;
+    private static final Class<?> DWO_CLASS = ReflectionUtil.getNMClass("network.syncher.DataWatcherObject");
+    private static final Class<?> DWS_CLASS = ReflectionUtil.getNMClass("network.syncher.DataWatcherSerializer");
+    private static final Class<?> DWI_CLASS = ReflectionUtil.getNMClass("network.syncher.DataWatcher$Item");
     private static final Object DWO_CUSTOM_NAME;
     private static final Object DWO_CUSTOM_NAME_VISIBLE;
     private static final Object DWO_ENTITY_DATA;
@@ -81,9 +81,6 @@ public class NMS_1_17 extends NMS {
             PACKET_DATA_SERIALIZER_CLASS, Object.class);
 
     static {
-        DWO_CLASS = ReflectionUtil.getNMClass("network.syncher.DataWatcherObject");
-        DWS_CLASS = ReflectionUtil.getNMClass("network.syncher.DataWatcherSerializer");
-        DWI_CLASS = ReflectionUtil.getNMClass("network.syncher.DataWatcher$Item");
         // UTILITY
         ENTITY_CLASS = ReflectionUtil.getNMClass("world.entity.Entity");
         ENTITY_ARMOR_STAND_CLASS = ReflectionUtil.getNMClass("world.entity.decoration.EntityArmorStand");
@@ -117,7 +114,6 @@ public class NMS_1_17 extends NMS {
         MATH_HELPER_CLASS = ReflectionUtil.getNMClass("util.MathHelper");
         MATH_HELPER_A_METHOD = new ReflectMethod(MATH_HELPER_CLASS, "a", Random.class);
         // PACKET DATA SERIALIZER
-        PACKET_DATA_SERIALIZER_CLASS = ReflectionUtil.getNMClass("network.PacketDataSerializer");
         PACKET_DATA_SERIALIZER_CONSTRUCTOR = new ReflectConstructor(PACKET_DATA_SERIALIZER_CLASS, ByteBuf.class);
         if (Version.afterOrEqual(Version.v1_20_R2)) {
             PACKET_DATA_SERIALIZER_WRITE_INT_METHOD = new ReflectMethod(PACKET_DATA_SERIALIZER_CLASS, "c", int.class);
