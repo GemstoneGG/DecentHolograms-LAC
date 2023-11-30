@@ -1,8 +1,8 @@
 package eu.decentsoftware.holograms.api.listeners;
 
 import eu.decentsoftware.holograms.api.DecentHolograms;
+import eu.decentsoftware.holograms.api.DecentHologramsAPI;
 import eu.decentsoftware.holograms.api.Lang;
-import eu.decentsoftware.holograms.api.utils.scheduler.S;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -24,7 +24,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
-        S.async(() -> decentHolograms.getHologramManager().updateVisibility(player));
+        DecentHologramsAPI.getMorePaperLib().scheduling().asyncScheduler().run(() -> decentHolograms.getHologramManager().updateVisibility(player));
         decentHolograms.getPacketListener().hook(player);
         if (decentHolograms.isUpdateAvailable() && player.hasPermission("dh.admin")) {
             Lang.sendUpdateMessage(player);
@@ -34,7 +34,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
         Player player = e.getPlayer();
-        S.async(() -> decentHolograms.getHologramManager().onQuit(player));
+        DecentHologramsAPI.getMorePaperLib().scheduling().asyncScheduler().run(() -> decentHolograms.getHologramManager().onQuit(player));
         decentHolograms.getPacketListener().unhook(player);
     }
 
@@ -50,13 +50,13 @@ public class PlayerListener implements Listener {
         //  by a fraction of a block, the holograms still disappear and reappear for them.
         //  -
         //  tl:dr Figure out which versions need this.
-        S.async(() -> decentHolograms.getHologramManager().hideAll(player));
+        DecentHologramsAPI.getMorePaperLib().scheduling().asyncScheduler().run(() -> decentHolograms.getHologramManager().hideAll(player));
     }
 
     @EventHandler
     public void onTeleport(PlayerTeleportEvent e) {
         Player player = e.getPlayer();
-        S.async(() -> decentHolograms.getHologramManager().hideAll(player));
+        DecentHologramsAPI.getMorePaperLib().scheduling().asyncScheduler().run(() -> decentHolograms.getHologramManager().hideAll(player));
     }
 
 }
